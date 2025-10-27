@@ -1,7 +1,7 @@
 import type { Server, User, Review, GalleryPost, CommunityPost, CommunityComment } from './types';
 
 async function fetchOrThrow<T>(endpoint: string): Promise<T> {
-  const res = await fetch(process.env.VITE_MAIN_API_URL+endpoint);
+  const res = await fetch(endpoint);
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`Request to ${endpoint} failed: ${res.status} ${res.statusText} ${text}`);
@@ -11,16 +11,16 @@ async function fetchOrThrow<T>(endpoint: string): Promise<T> {
 }
 
 // --- Exported async fetch functions ---
-export const fetchUsers = async (): Promise<User[]> => fetchOrThrow<User[]>('/users');
-export const fetchServers = async (): Promise<Server[]> => fetchOrThrow<Server[]>('/servers');
-export const fetchReviews = async (): Promise<Review[]> => fetchOrThrow<Review[]>('/reviews');
-export const fetchGalleryPosts = async (): Promise<GalleryPost[]> => fetchOrThrow<GalleryPost[]>('/gallery');
-export const fetchCommunityPosts = async (): Promise<CommunityPost[]> => fetchOrThrow<CommunityPost[]>('/community/posts');
-export const fetchCommunityComments = async (): Promise<CommunityComment[]> => fetchOrThrow<CommunityComment[]>('/community/comments');
+export const fetchUsers = async (): Promise<User[]> => fetchOrThrow<User[]>('/api/users');
+export const fetchServers = async (): Promise<Server[]> => fetchOrThrow<Server[]>('/api/servers');
+export const fetchReviews = async (): Promise<Review[]> => fetchOrThrow<Review[]>('/api/reviews');
+export const fetchGalleryPosts = async (): Promise<GalleryPost[]> => fetchOrThrow<GalleryPost[]>('/api/gallery');
+export const fetchCommunityPosts = async (): Promise<CommunityPost[]> => fetchOrThrow<CommunityPost[]>('/api/community/posts');
+export const fetchCommunityComments = async (): Promise<CommunityComment[]> => fetchOrThrow<CommunityComment[]>('/api/community/comments');
 
 // --- POST helpers ---
 async function postOrThrow<T, B = any>(endpoint: string, body: B): Promise<T> {
-  const res = await fetch(process.env.VITE_MAIN_API_URL+endpoint, {
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
