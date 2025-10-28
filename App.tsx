@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Server, User } from './types';
-import { fetchServers, fetchUsers } from './constants';
+import { fetchServers, fetchUsers, fetchID } from './constants';
 import { ServerList } from './components/ServerList';
 import { ServerDetail } from './components/ServerDetail';
 import { ServerRegistrationForm } from './components/ServerRegistrationForm';
@@ -20,11 +20,16 @@ const App: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-  const [srv, usrs] = await Promise.all([fetchServers(), fetchUsers()]);
-  if (!mounted) return;
-  setServers(srv);
-  setUsers(usrs);
-  setCurrentUser(usrs[0] ?? null);
+        const [srv, usrs, me] = await Promise.all([fetchServers(), fetchUsers(), fetchID()]);
+        if (!mounted) return;
+        setServers(srv);
+        setUsers(usrs);
+        
+        if (me != null) {
+          setCurrentUser(usrs[me]);
+        } else {
+          setCurrentUser(null)
+        }
       } catch (err: any) {
         setError(err?.message ?? String(err));
       } finally {
@@ -105,11 +110,9 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="absolute top-full right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 invisible group-hover:visible z-30">
-                  {users.map(u => (
-                    <button key={u.id} onClick={() => setCurrentUser(u)} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">{u.username}</button>
-                  ))}
+                  <button onClick={() => alert("해당 기능은 구현 되어있지 않습니다.")} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">{currentUser?.username ?? '로그인'}</button>
                   <div className="border-t border-slate-700 my-1"></div>
-                  <button onClick={() => setCurrentUser(null)} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">로그아웃 (게스트)</button>
+                  <button onClick={() => setCurrentUser(null)} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">로그아웃</button>
                 </div>
               </div>
             </div>

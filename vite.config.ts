@@ -15,6 +15,14 @@ export default defineConfig(({ command, mode }) => {
       plugins: [react()],
       server: {
         port: 5173,
+        proxy: {
+          '/api':{
+            target: "http://localhost:5000",
+            changeOrigin: true,
+            secure: false,
+            rewrite: (path) => path.replace('/api', ""),
+          },
+        },
       },
       define: {
         // 전역 환경변수 정의

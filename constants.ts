@@ -12,6 +12,7 @@ async function fetchOrThrow<T>(endpoint: string): Promise<T> {
 
 // --- Exported async fetch functions ---
 export const fetchUsers = async (): Promise<User[]> => fetchOrThrow<User[]>('/api/users');
+export const fetchID = async (): Promise<number> => parseInt(await fetchOrThrow<string>('/api/me'));
 export const fetchServers = async (): Promise<Server[]> => fetchOrThrow<Server[]>('/api/servers');
 export const fetchReviews = async (): Promise<Review[]> => fetchOrThrow<Review[]>('/api/reviews');
 export const fetchGalleryPosts = async (): Promise<GalleryPost[]> => fetchOrThrow<GalleryPost[]>('/api/gallery');
