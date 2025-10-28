@@ -1,8 +1,0 @@
-[build]
-  command = "npm run build"
-  publish = "dist"  # or "build" (CRA 사용 시)
-
-[[redirects]]
-  from = "/api/*"
-  to = "${VITE_MAIN_API_URL}/:splat" # * 부분(users/123)이 :splat로 치환돼서 프록시 요청이 그대로 전달되는 거예요.
-  status = 200

@@ -1,7 +1,7 @@
 import type { Server, User, Review, GalleryPost, CommunityPost, CommunityComment } from './types';
 
 async function fetchOrThrow<T>(endpoint: string): Promise<T> {
-  const res = await fetch(endpoint);
+  const res = await fetch(process.env.VITE_MAIN_API_URL+endpoint);
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`Request to ${endpoint} failed: ${res.status} ${res.statusText} ${text}`);
@@ -21,7 +21,7 @@ export const fetchCommunityComments = async (): Promise<CommunityComment[]> => f
 
 // --- POST helpers ---
 async function postOrThrow<T, B = any>(endpoint: string, body: B): Promise<T> {
-  const res = await fetch(endpoint, {
+  const res = await fetch(process.env.VITE_MAIN_API_URL+endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
