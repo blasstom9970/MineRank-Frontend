@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Server, Review, GalleryPost, User } from '../types';
-import { fetchReviews, fetchGalleryPosts } from '../constants';
+import { fetchReviews, fetchGalleryPosts, fetchUsers } from '../constants';
 import { Gallery } from './Gallery';
 import { ReviewList } from './ReviewList';
 import { ReviewForm } from './ReviewForm';
@@ -35,6 +35,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 export const ServerDetail: React.FC<ServerDetailProps> = ({ server, onBack, currentUser }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [galleryPosts, setGalleryPosts] = useState<GalleryPost[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [aiSummary, setAiSummary] = useState<string>('');
   const [isSummarizing, setIsSummarizing] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<Tab>('details');
@@ -43,10 +44,11 @@ export const ServerDetail: React.FC<ServerDetailProps> = ({ server, onBack, curr
     let mounted = true;
     const load = async () => {
       try {
-        const [allReviews, allGallery] = await Promise.all([fetchReviews(), fetchGalleryPosts()]);
+        const [allReviews, allGallery, allUsers] = await Promise.all([fetchReviews(), fetchGalleryPosts(), fetchUsers()]);
         if (!mounted) return;
         setReviews(allReviews.filter(r => r.serverId == server.id));
         setGalleryPosts(allGallery.filter(p => p.serverId == server.id));
+        setUsers(allUsers);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.warn('Failed to load reviews or gallery posts', err);
@@ -131,7 +133,7 @@ export const ServerDetail: React.FC<ServerDetailProps> = ({ server, onBack, curr
              </div>
           )}
 
-          {activeTab === 'gallery' && <Gallery posts={galleryPosts} />}
+          {activeTab === 'gallery' && <Gallery posts={galleryPosts} users={users} />}
           
           {activeTab === 'reviews' && (
              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
