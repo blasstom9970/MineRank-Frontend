@@ -12,7 +12,7 @@ async function fetchOrThrow<T>(endpoint: string): Promise<T> {
 
 // --- Exported async fetch functions ---
 export const fetchUsers = async (): Promise<User[]> => fetchOrThrow<User[]>('/api/users');
-export const fetchID = async (): Promise<number> => parseInt(await fetchOrThrow<string>('/api/me'));
+export const fetchID = async (): Promise<number> => parseInt(await fetchOrThrow<string>('/api/auth/me'));
 export const fetchServers = async (): Promise<Server[]> => fetchOrThrow<Server[]>('/api/servers');
 export const fetchReviews = async (): Promise<Review[]> => fetchOrThrow<Review[]>('/api/reviews');
 export const fetchGalleryPosts = async (): Promise<GalleryPost[]> => fetchOrThrow<GalleryPost[]>('/api/gallery');
@@ -21,7 +21,7 @@ export const fetchCommunityComments = async (): Promise<CommunityComment[]> => f
 
 // --- POST helpers ---
 async function postOrThrow<T, B = any>(endpoint: string, body: B): Promise<T> {
-  const res = await fetch(process.env.VITE_MAIN_API_URL+endpoint, {
+  const res = await fetch(process.env.VITE_MAIN_API_URL + endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -46,3 +46,12 @@ export const createCommunityPost = async (postData: Omit<import('./types').Commu
 
 export const createCommunityComment = async (commentData: Omit<import('./types').CommunityComment, 'id' | 'timestamp'>) =>
   postOrThrow<import('./types').CommunityComment>('/api/community/comments', commentData);
+
+// --- Auth endpoints ---
+export const authLogin = async (payload: { username: string; password: string }) =>
+  postOrThrow<Pick<User, 'id' | 'username'>>('/api/auth/login', payload);
+
+export const authSignup = async (payload: { username: string; password: string }) =>
+  postOrThrow<Pick<User, 'id' | 'username'>>('/api/auth/signup', payload);
+
+export const authLogout = async () => postOrThrow<{ ok: boolean }>('/api/auth/logout', {});

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import type { Server, User } from './types';
-import { fetchServers, fetchUsers, fetchID } from './constants';
+import { fetchServers, fetchUsers, fetchID, authLogin, authSignup, authLogout } from './constants';
 import { ServerList } from './components/ServerList';
 import { ServerDetail } from './components/ServerDetail';
 import { ServerRegistrationForm } from './components/ServerRegistrationForm';
 import { UserIcon, PlusCircleIcon } from './components/icons';
+import AuthModal from './components/AuthModal';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'list' | 'detail' | 'register'>('list');
@@ -14,6 +15,7 @@ const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -24,11 +26,10 @@ const App: React.FC = () => {
         if (!mounted) return;
         setServers(srv);
         setUsers(usrs);
-        
-        if (me != null) {
-          setCurrentUser(usrs[me]);
+        if (me === -1) {
+          setCurrentUser(null);
         } else {
-          setCurrentUser(null)
+          setCurrentUser(me);
         }
       } catch (err: any) {
         setError(err?.message ?? String(err));
@@ -61,6 +62,24 @@ const App: React.FC = () => {
   };
 
   const selectedServer = servers.find(s => s.id === selectedServerId);
+
+  const handleDoLogin = async (payload: { username: string; password: string }) => {
+    const me = await authLogin(payload);
+    setCurrentUser(me as any);
+  };
+
+  const handleDoSignup = async (payload: { username: string; password: string }) => {
+    const me = await authSignup(payload);
+    setCurrentUser(me as any);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authLogout();
+    } finally {
+      setCurrentUser(null);
+    }
+  };
 
   const renderContent = () => {
     switch (view) {
@@ -110,9 +129,17 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="absolute top-full right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 invisible group-hover:visible z-30">
-                  <button onClick={() => alert("해당 기능은 구현 되어있지 않습니다.")} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">{currentUser?.username ?? '로그인'}</button>
-                  <div className="border-t border-slate-700 my-1"></div>
-                  <button onClick={() => setCurrentUser(null)} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">로그아웃</button>
+                  {currentUser ? (
+                    <>
+                      <div className="px-4 py-2 text-sm text-slate-300">{currentUser.username}</div>
+                      <div className="border-t border-slate-700 my-1"></div>
+                      <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">로그아웃</button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => setAuthOpen(true)} className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 cursor-pointer">로그인 / 회원가입</button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -128,6 +155,12 @@ const App: React.FC = () => {
           renderContent()
         )}
       </main>
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onLogin={handleDoLogin}
+        onSignup={handleDoSignup}
+      />
       <footer className="bg-slate-900/70 border-t border-slate-800 mt-12">
         <div className="container mx-auto px-4 py-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
