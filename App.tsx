@@ -74,11 +74,8 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await authLogout();
-    } finally {
-      setCurrentUser(null);
-    }
+    await authLogout();
+    setCurrentUser(null);
   };
 
   const renderContent = () => {

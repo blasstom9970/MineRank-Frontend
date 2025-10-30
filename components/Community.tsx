@@ -30,7 +30,7 @@ export const Community: React.FC<CommunityProps> = ({ serverId, currentUser }) =
         setComments(allComments.filter(c => serverPostIds.includes(c.postId)));
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.warn('Failed to load community posts/comments', err);
+        console.error('Failed to load community posts/comments', err);
       }
     };
     load();
@@ -82,7 +82,10 @@ export const Community: React.FC<CommunityProps> = ({ serverId, currentUser }) =
 
   if (view === 'detail' && selectedPostId) {
     const post = posts.find(p => p.id === selectedPostId);
-    if (!post) return null;
+    console.log('Found post:', post);
+    if (!post) {
+      return <div className="text-red-400">게시물을 찾을 수 없습니다. <button onClick={handleBackToList} className="underline">목록으로 돌아가기</button></div>;
+    }
     const postComments = comments.filter(c => c.postId === selectedPostId);
     return <CommunityPostDetail post={post} comments={postComments} currentUser={currentUser} onBack={handleBackToList} onSubmitComment={handleCommentSubmit} />;
   }

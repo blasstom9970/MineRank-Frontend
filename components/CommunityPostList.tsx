@@ -14,7 +14,7 @@ export const CommunityPostList: React.FC<CommunityPostListProps> = ({ posts, cur
     <div>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-bold text-sky-400">커뮤니티 게시판</h3>
-        {currentUser && (
+        {currentUser ? (
           <button 
             onClick={onWritePost}
             className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300"
@@ -22,6 +22,10 @@ export const CommunityPostList: React.FC<CommunityPostListProps> = ({ posts, cur
             <PlusCircleIcon className="w-5 h-5" />
             <span>게시물 작성하기</span>
           </button>
+        ) : (
+          <div className="text-slate-400 text-sm">
+            게시물을 작성하려면 로그인해야 합니다.
+          </div>
         )}
       </div>
       
