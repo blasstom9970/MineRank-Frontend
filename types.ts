@@ -7,7 +7,7 @@ export interface User {
 export interface Review {
   id: number;
   serverId: number;
-  user: User;
+  user: number;
   rating: number;
   comment: string;
   timestamp: string;
