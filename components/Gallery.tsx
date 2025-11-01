@@ -1,12 +1,13 @@
 
 import React from 'react';
-import type { GalleryPost } from '../types';
+import type { GalleryPost, User} from '../types';
 
 interface GalleryProps {
   posts: GalleryPost[];
+  users: User[];
 }
 
-export const Gallery: React.FC<GalleryProps> = ({ posts }) => {
+export const Gallery: React.FC<GalleryProps> = ({ posts, users }) => {
   return (
     <div>
       <h3 className="text-2xl font-bold mb-4 text-sky-400">커뮤니티 갤러리</h3>
@@ -18,7 +19,7 @@ export const Gallery: React.FC<GalleryProps> = ({ posts }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-4 text-white">
                 <p className="text-sm font-semibold">{post.caption}</p>
-                <p className="text-xs text-slate-300">{post.user.username} 님이 작성</p>
+                <p className="text-xs text-slate-300">{users.find(user => user.id === post.user)?.username ?? "익명"} 님이 작성</p>
               </div>
             </div>
           ))}

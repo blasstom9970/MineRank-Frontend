@@ -41,7 +41,7 @@ export const ServerRegistrationForm: React.FC<ServerRegistrationFormProps> = ({ 
                 ip,
                 version,
                 description,
-                tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+                tags: tags,
                 maxPlayers: parsedMaxPlayers,
                 bannerUrl,
             });

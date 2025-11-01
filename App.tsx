@@ -74,11 +74,8 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await authLogout();
-    } finally {
-      setCurrentUser(null);
-    }
+    await authLogout();
+    setCurrentUser(null);
   };
 
   const renderContent = () => {
@@ -129,7 +126,7 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="absolute top-full right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 invisible group-hover:visible z-30">
-                  {currentUser ? (
+                  {currentUser?.username ? (
                     <>
                       <div className="px-4 py-2 text-sm text-slate-300">{currentUser.username}</div>
                       <div className="border-t border-slate-700 my-1"></div>
